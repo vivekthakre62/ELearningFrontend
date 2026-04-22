@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { usePopup } from "../components/PopupProvider";
 
 export default function RegistrationPage() {
+  const { showPopup } = usePopup();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -27,14 +28,14 @@ export default function RegistrationPage() {
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      showPopup({ message: "Passwords do not match!", type: "warning" });
       setLoading(false);
       return;
     }
 
     try {
       await axios.post("http://localhost:8080/api/user/register", formData);
-      alert("Registration successful!");
+      showPopup({ message: "Registration successful!", type: "success" });
 
       setFormData({
         name: "",
@@ -47,10 +48,12 @@ export default function RegistrationPage() {
       setShowPassword(false);
       setShowConfirmPassword(false);
     } catch (error) {
-      alert(
-        "Registration failed: " +
-          (error.response?.data?.message || "Network or server error")
-      );
+      showPopup({
+        message:
+          "Registration failed: " +
+          (error.response?.data?.message || "Network or server error"),
+        type: "error",
+      });
       console.error(error);
     } finally {
       setLoading(false);
@@ -59,14 +62,12 @@ export default function RegistrationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-800 via-blue-500 to-gray-900 p-4 flex flex-col items-center">
- 
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-md w-full flex flex-col gap-6 relative overflow-hidden"
       >
-        {/* Header */}
         <motion.div
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -90,7 +91,6 @@ export default function RegistrationPage() {
           </motion.h1>
         </motion.div>
 
-        {/* Registration Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <motion.input
             initial={{ x: -100, opacity: 0 }}
@@ -131,7 +131,6 @@ export default function RegistrationPage() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
           />
 
-          {/* Password */}
           <motion.div
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -156,7 +155,6 @@ export default function RegistrationPage() {
             </button>
           </motion.div>
 
-          {/* Confirm Password */}
           <motion.div
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -181,7 +179,6 @@ export default function RegistrationPage() {
             </button>
           </motion.div>
 
-          {/* Role Selection */}
           <motion.select
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -196,7 +193,6 @@ export default function RegistrationPage() {
             <option value="admin">Admin</option>
           </motion.select>
 
-          {/* Submit */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -215,15 +211,11 @@ export default function RegistrationPage() {
           className="text-center text-gray-500 text-sm mt-4"
         >
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 hover:text-blue-500 transition"
-          >
+          <Link to="/login" className="text-blue-600 hover:text-blue-500 transition">
             Login
           </Link>
         </motion.p>
 
-        {/* Floating Background Circle */}
         <motion.div
           className="absolute -bottom-10 -right-10 w-60 h-60 bg-yellow-500 rounded-full blur-3xl opacity-10"
           animate={{ x: [0, -20, 0], y: [0, 10, 0] }}

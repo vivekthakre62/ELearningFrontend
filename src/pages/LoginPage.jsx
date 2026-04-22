@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import { usePopup } from "../components/PopupProvider";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,12 +36,13 @@ export default function LoginPage() {
       localStorage.setItem("email", data.user.email);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      alert(`Welcome ${data.user.role}!`);
+      showPopup({ message: `Welcome ${data.user.role}!`, type: "success" });
       navigate("/");
     } catch (error) {
-      alert(
-        error.response?.data?.message || "Login failed: Network error"
-      );
+      showPopup({
+        message: error.response?.data?.message || "Login failed: Network error",
+        type: "error",
+      });
       console.error("Login failed", error);
     } finally {
       setLoading(false);
@@ -49,14 +51,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-800 via-blue-500 to-gray-900 text-white p-4 flex items-center justify-center">
- 
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         className="bg-white rounded-2xl shadow-2xl p-8 md:p-16 max-w-md w-full flex flex-col gap-6 relative"
       >
-        {/* Header */}
         <motion.h1
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -66,7 +66,6 @@ export default function LoginPage() {
           Login
         </motion.h1>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <motion.input
             initial={{ x: -100, opacity: 0 }}
@@ -136,11 +135,8 @@ export default function LoginPage() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-center text-gray-500 text-sm mt-4"
         >
-          Don’t have an account?{" "}
-          <Link
-            to="/register"
-            className="text-blue-600 hover:text-blue-500 transition"
-          >
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:text-blue-500 transition">
             Register
           </Link>
         </motion.p>

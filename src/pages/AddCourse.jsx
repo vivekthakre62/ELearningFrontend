@@ -4,12 +4,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { usePopup } from "../components/PopupProvider";
 
 export default function AddCourse() {
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
-console.log("token from add course is:",token);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -24,12 +25,10 @@ console.log("token from add course is:",token);
   const [loading, setLoading] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Redirect if not logged in or not a teacher
   useEffect(() => {
     if (!token || user?.role !== "teacher") navigate("/login");
   }, [token, user, navigate]);
 
-  // Fetch categories from backend
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/categories/get")
@@ -54,7 +53,7 @@ console.log("token from add course is:",token);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      alert("Please select an image");
+      showPopup({ message: "Please select an image", type: "warning" });
       return;
     }
 
@@ -85,7 +84,7 @@ console.log("token from add course is:",token);
         },
       });
 
-      alert("Course added successfully!");
+      showPopup({ message: "Course added successfully!", type: "success" });
       navigate("/courses");
 
       setFormData({
@@ -100,7 +99,7 @@ console.log("token from add course is:",token);
       setPreview(null);
     } catch (err) {
       console.error("Error adding course:", err);
-      alert("Failed to add course");
+      showPopup({ message: "Failed to add course", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -110,7 +109,6 @@ console.log("token from add course is:",token);
     <div className="relative min-h-screen bg-gradient-to-br from-blue-800 via-blue-500 to-gray-900 text-white overflow-hidden">
       <Navbar />
 
-      {/* Animated background glows */}
       <motion.div className="absolute w-96 h-96 bg-yellow-500 rounded-full blur-3xl opacity-20 top-10 left-10 animate-pulse" />
       <motion.div className="absolute w-96 h-96 bg-orange-500 rounded-full blur-3xl opacity-20 bottom-10 right-10 animate-pulse" />
 
@@ -156,7 +154,6 @@ console.log("token from add course is:",token);
             required
           />
 
-          {/* Category Dropdown */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, y: 20 }}
@@ -238,7 +235,6 @@ console.log("token from add course is:",token);
             required
           />
 
-          {/* File Upload */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

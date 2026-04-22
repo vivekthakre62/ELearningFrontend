@@ -2,21 +2,22 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { usePopup } from "../components/PopupProvider";
 
 export default function AttemptTest() {
   const { testId } = useParams();
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+  const [timeLeft, setTimeLeft] = useState(600);
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
 
   const baseUrl = "http://localhost:8080/api/question";
 
-  // Fetch questions
   const fetchQuestions = async () => {
     try {
       setLoading(true);
@@ -33,12 +34,11 @@ export default function AttemptTest() {
     fetchQuestions();
   }, [testId]);
 
-  // Countdown timer
   useEffect(() => {
-    if (submitted) return; // stop timer after submission
+    if (submitted) return;
 
     if (timeLeft <= 0) {
-      handleSubmit(); // auto-submit
+      handleSubmit();
       return;
     }
 
@@ -46,13 +46,11 @@ export default function AttemptTest() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted]);
 
-  // Select option (store key "A"|"B"|"C"|"D")
   const handleSelectOption = (questionId, optionKey) => {
     if (submitted) return;
     setAnswers((prev) => ({ ...prev, [questionId]: optionKey }));
   };
 
-  // Submit answers
   const handleSubmit = () => {
     if (submitted) return;
 
@@ -67,10 +65,13 @@ export default function AttemptTest() {
     setScore(calculatedScore);
     setSubmitted(true);
 
-    alert(`✅ Test Submitted!\nScore: ${calculatedScore}% (${correct}/${total})`);
+    showPopup({
+      message: `Test submitted! Score: ${calculatedScore}% (${correct}/${total})`,
+      type: "success",
+      duration: 4500,
+    });
   };
 
-  // Format MM:SS
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -85,16 +86,15 @@ export default function AttemptTest() {
         transition={{ duration: 0.5 }}
         className="text-3xl font-extrabold text-indigo-800 mb-6"
       >
-        📝 Test In Progress
+        Test In Progress
       </motion.h1>
 
-      {/* Timer */}
       <div
         className={`px-5 py-3 rounded-full mb-6 text-xl font-semibold ${
           submitted ? "bg-gray-300 text-gray-700" : "bg-red-500 text-white"
         }`}
       >
-        ⏰ Time Left: {submitted ? "00:00" : formatTime(timeLeft)}
+        Time Left: {submitted ? "00:00" : formatTime(timeLeft)}
       </div>
 
       {loading ? (
@@ -141,7 +141,7 @@ export default function AttemptTest() {
 
               {submitted && (
                 <p className="mt-2 font-medium text-green-600">
-                  ✅ Correct Answer: {q.correctAnswer}
+                  Correct Answer: {q.correctAnswer}
                 </p>
               )}
             </motion.div>
@@ -158,7 +158,7 @@ export default function AttemptTest() {
 
           {submitted && score !== null && (
             <p className="text-center mt-4 text-xl font-bold text-green-700">
-              🎉 Your Score: {score}%
+              Your Score: {score}%
             </p>
           )}
         </div>

@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { usePopup } from "../components/PopupProvider";
 
 function UpdateCourse() {
-  const { courseId } = useParams(); // Get course ID from URL
+  const { courseId } = useParams();
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
   const token = localStorage.getItem("token");
 
   const [course, setCourse] = useState({
@@ -16,7 +18,6 @@ function UpdateCourse() {
     price: "",
   });
 
-  // ✅ Fetch existing course details
   useEffect(() => {
     axios
       .get(`http://localhost:8080/api/course/get/${courseId}`, {
@@ -32,12 +33,10 @@ function UpdateCourse() {
       });
   }, [courseId, token]);
 
-  // ✅ Handle input changes
   const handleChange = (e) => {
     setCourse({ ...course, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle update (PUT request)
   const handleUpdate = (e) => {
     e.preventDefault();
 
@@ -49,12 +48,12 @@ function UpdateCourse() {
         },
       })
       .then(() => {
-        alert("✅ Course updated successfully!");
-        navigate("/"); // redirect to course list
+        showPopup({ message: "Course updated successfully!", type: "success" });
+        navigate("/");
       })
       .catch((err) => {
         console.error("Error updating course:", err);
-        alert("❌ Failed to update course!");
+        showPopup({ message: "Failed to update course!", type: "error" });
       });
   };
 
@@ -67,11 +66,10 @@ function UpdateCourse() {
         transition={{ duration: 0.5 }}
       >
         <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
-          ✏️ Update Course
+          Update Course
         </h2>
 
         <form onSubmit={handleUpdate} className="space-y-4">
-          {/* Title */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
               Course Title
@@ -86,7 +84,6 @@ function UpdateCourse() {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
               Description
@@ -101,7 +98,6 @@ function UpdateCourse() {
             />
           </div>
 
-          {/* Category */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
               Category
@@ -116,7 +112,6 @@ function UpdateCourse() {
             />
           </div>
 
-          {/* Duration */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
               Duration (in hours)
@@ -131,10 +126,9 @@ function UpdateCourse() {
             />
           </div>
 
-          {/* Price */}
           <div>
             <label className="block text-gray-700 font-semibold mb-1">
-              Price (₹)
+              Price (Rs)
             </label>
             <input
               type="number"
@@ -161,4 +155,3 @@ function UpdateCourse() {
 }
 
 export default UpdateCourse;
-

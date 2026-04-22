@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PlusCircle, Trash2, Edit3, Save, X } from "lucide-react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { usePopup } from "../components/PopupProvider";
 
 export default function Question() {
   const { testId } = useParams();
+  const { showPopup, confirm } = usePopup();
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState({
     questionText: "",
@@ -23,44 +25,45 @@ export default function Question() {
     "Content-Type": "application/json",
   };
 
-  // Fetch questions
-const fetchQuestions = async () => {
-  try {
-    setLoading(true);
+  const fetchQuestions = async () => {
+    try {
+      setLoading(true);
 
-    const res = await axios.get(
-      `http://localhost:8080/api/question/show/${testId}`,
-      { headers }
-    );
+      const res = await axios.get(
+        `http://localhost:8080/api/question/show/${testId}`,
+        { headers }
+      );
 
-    // Ensure the response is always an array
-    const questionsArray = Array.isArray(res.data) ? res.data : [res.data];
+      const questionsArray = Array.isArray(res.data) ? res.data : [res.data];
+      setQuestions(questionsArray);
+    } catch (err) {
+      console.error("Error fetching questions:", err);
+      showPopup({
+        message: "Failed to load questions. Check token or permissions.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    setQuestions(questionsArray);
+  useEffect(() => {
+    fetchQuestions();
+  }, [testId]);
 
-    console.log("Fetched questions:", questionsArray); // Debugging
-  } catch (err) {
-    console.error("Error fetching questions:", err);
-    alert("❌ Failed to load questions (check token or permissions)");
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  fetchQuestions();
-}, [testId]);
-
-
-  // Add question
   const handleAddQuestion = async (e) => {
     e.preventDefault();
-    if (!newQuestion.questionText.trim()) return alert("Enter question text!");
+
+    if (!newQuestion.questionText.trim()) {
+      showPopup({ message: "Enter question text!", type: "warning" });
+      return;
+    }
+
     try {
       setLoading(true);
       await axios.post(
         `http://localhost:8080/api/question/add/${testId}`,
-        newQuestion, 
+        newQuestion,
         { headers }
       );
       setNewQuestion({
@@ -72,67 +75,74 @@ useEffect(() => {
         correctAnswer: "",
       });
       fetchQuestions();
-      alert("✅ Question added successfully!");
+      showPopup({ message: "Question added successfully!", type: "success" });
     } catch (err) {
       console.error("Error adding question:", err);
-      alert("❌ Failed to add question. Check JWT or permissions");
+      showPopup({
+        message: "Failed to add question. Check JWT or permissions.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete question
   const handleDeleteQuestion = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this question?")) return;
+    const confirmed = await confirm({
+      title: "Delete this question?",
+      message: "This question will be removed from the test permanently.",
+      confirmText: "Delete",
+      type: "error",
+    });
+    if (!confirmed) return;
+
     try {
-      await axios.delete(`http://localhost:8080/api/question/delete/${id}`, { headers });
+      await axios.delete(`http://localhost:8080/api/question/delete/${id}`, {
+        headers,
+      });
       setQuestions((prev) => prev.filter((q) => q.id !== id));
     } catch (err) {
       console.error("Error deleting question:", err);
-      alert("❌ Failed to delete question");
+      showPopup({ message: "Failed to delete question", type: "error" });
     }
   };
 
-  // Update question
- // ✅ Update question
-const handleUpdateQuestion = async (index) => {
-  const q = questions[index];
+  const handleUpdateQuestion = async (index) => {
+    const q = questions[index];
 
-  // Prepare data exactly as backend expects
-  const updatedQuestion = {
-    questionText: q.questionText,
-    optionA: q.optionA,
-    optionB: q.optionB,
-    optionC: q.optionC,
-    optionD: q.optionD,
-    correctAnswer: q.correctAnswer,
+    const updatedQuestion = {
+      questionText: q.questionText,
+      optionA: q.optionA,
+      optionB: q.optionB,
+      optionC: q.optionC,
+      optionD: q.optionD,
+      correctAnswer: q.correctAnswer,
+    };
+
+    try {
+      setLoading(true);
+      await axios.put(
+        `http://localhost:8080/api/question/update/${q.id}`,
+        updatedQuestion,
+        { headers }
+      );
+
+      const updatedList = [...questions];
+      updatedList[index] = { ...q };
+      setQuestions(updatedList);
+      setEditingIndex(null);
+      showPopup({ message: "Question updated successfully!", type: "success" });
+    } catch (err) {
+      console.error("Error updating question:", err);
+      showPopup({
+        message: "Failed to update question. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  try {
-    setLoading(true);
-    await axios.put(
-      `http://localhost:8080/api/question/update/${q.id}`,
-      updatedQuestion,
-      { headers }
-    );
-
-    // Update frontend state after successful save
-    const updatedList = [...questions];
-    updatedList[index] = { ...q };
-    setQuestions(updatedList);
-
-    setEditingIndex(null);
-    alert("✅ Question updated successfully!");
-  } catch (err) {
-    console.error("Error updating question:", err);
-    alert("❌ Failed to update question. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  // Handle input change when editing
   const handleEditChange = (index, field, value) => {
     const updated = [...questions];
     updated[index][field] = value;
@@ -147,10 +157,9 @@ const handleUpdateQuestion = async (index) => {
         transition={{ duration: 0.6 }}
         className="text-4xl font-extrabold text-indigo-800 mb-8 drop-shadow-md"
       >
-        ✏️ Manage Questions for Test #{testId}
+        Manage Questions for Test #{testId}
       </motion.h1>
 
-      {/* Add New Question */}
       <motion.form
         onSubmit={handleAddQuestion}
         initial={{ scale: 0.95, opacity: 0 }}
@@ -190,7 +199,9 @@ const handleUpdateQuestion = async (index) => {
           >
             <option value="">Select</option>
             {["A", "B", "C", "D"].map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
             ))}
           </select>
         </div>
@@ -204,7 +215,6 @@ const handleUpdateQuestion = async (index) => {
         </button>
       </motion.form>
 
-      {/* All Questions */}
       <div className="w-full max-w-5xl">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">All Questions</h2>
 
@@ -251,7 +261,9 @@ const handleUpdateQuestion = async (index) => {
                       >
                         <option value="">Select</option>
                         {["A", "B", "C", "D"].map((opt) => (
-                          <option key={opt} value={opt}>{opt}</option>
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -281,7 +293,7 @@ const handleUpdateQuestion = async (index) => {
                       <li>D. {q.optionD}</li>
                     </ul>
                     <p className="font-medium text-green-600">
-                      ✅ Correct Answer: {q.correctAnswer}
+                      Correct Answer: {q.correctAnswer}
                     </p>
 
                     <div className="flex gap-4 mt-3">

@@ -3,9 +3,11 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FileText, Image as ImageIcon, Video, Loader2 } from "lucide-react";
+import { usePopup } from "../components/PopupProvider";
 
 export default function ShowContent() {
   const { courseId } = useParams();
+  const { showPopup } = usePopup();
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -18,9 +20,7 @@ export default function ShowContent() {
           `http://localhost:8080/api/contents/get/${courseId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log(res.data);
         setContents(res.data);
-        
       } catch (err) {
         console.error(err);
         setError("Failed to load course contents!");
@@ -43,34 +43,38 @@ export default function ShowContent() {
       window.open(blobUrl);
     } catch (err) {
       console.error("Failed to open file:", err);
-      alert("Cannot open this file. Please try again!");
+      showPopup({ message: "Cannot open this file. Please try again!", type: "error" });
     }
   };
 
   const getFileTypeIcon = (fileName) => {
     const ext = fileName.split(".").pop().toLowerCase();
     if (["pdf"].includes(ext)) return <FileText className="text-red-400 w-8 h-8" />;
-    if (["jpg", "jpeg", "png", "gif"].includes(ext))
+    if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
       return <ImageIcon className="text-blue-400 w-8 h-8" />;
-    if (["mp4", "mov", "avi"].includes(ext))
+    }
+    if (["mp4", "mov", "avi"].includes(ext)) {
       return <Video className="text-green-400 w-8 h-8" />;
+    }
     return <FileText className="text-gray-400 w-8 h-8" />;
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-blue-800 to-blue-600">
         <Loader2 className="w-10 h-10 animate-spin text-yellow-400" />
         <p className="text-yellow-300 mt-3">Loading contents...</p>
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-blue-800 to-blue-600 text-red-400 font-semibold">
         {error}
       </div>
     );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-800 to-blue-600 text-white py-10 px-6 relative">
@@ -118,7 +122,6 @@ export default function ShowContent() {
         </motion.div>
       )}
 
-      {/* Background animations */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.15 }}

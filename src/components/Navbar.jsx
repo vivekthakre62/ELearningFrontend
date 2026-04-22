@@ -185,7 +185,7 @@ function Navbar() {
           {user?.role === "admin" && (
             <>
               <Link to="/addCategories" className="hover:text-yellow-400 transition">Add Category</Link>
-              <Link to="/deleteCategory" className="hover:text-yellow-400 transition">Delete Category</Link>
+              <Link to="/deleteCategory" className="hover:text-yellow-400 transition" onClick={()=>navigate("/deleteCategorie")}>Delete Category</Link>
               <Link to="/allStudents" className="hover:text-yellow-400 transition">All Students</Link>
               <Link to="/allTeachers" className="hover:text-yellow-400 transition">All Teachers</Link>
             </>
@@ -285,7 +285,6 @@ function Navbar() {
               <Link to="/registeredCourse" className="block hover:text-yellow-400 transition">Register Courses</Link>
               <Link to="/test-student" className="block hover:text-yellow-400 transition font-semibold">Test</Link>
               <Link to="/contact" className="block hover:text-yellow-400 transition">Contact</Link>
-              <Link to="/messageList" className="block hover:text-yellow-400 transition">Message</Link>
             </>
           )}
 
@@ -303,7 +302,7 @@ function Navbar() {
           {user?.role === "admin" && (
             <>
               <Link to="/addCategories" className="block hover:text-yellow-400 transition">Add Category</Link>
-              <Link to="/deleteCategory" className="block hover:text-yellow-400 transition">Delete Category</Link>
+              <Link to="/deleteCategorie" className="block hover:text-yellow-400 transition">Delete Category</Link>
               <Link to="/allStudents" className="block hover:text-yellow-400 transition">All Students</Link>
               <Link to="/allTeachers" className="block hover:text-yellow-400 transition">All Teachers</Link>
             </>

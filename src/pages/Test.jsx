@@ -3,8 +3,10 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Edit, Trash2, PlusCircle, ListPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { usePopup } from "../components/PopupProvider";
 
 export default function Test() {
+  const { confirm, showPopup } = usePopup();
   const [tests, setTests] = useState([]);
   const [newTest, setNewTest] = useState({ title: "", description: "" });
   const [editingTest, setEditingTest] = useState(null);
@@ -47,12 +49,19 @@ export default function Test() {
 
   // ✅ Delete test
   const handleDeleteTest = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this test?")) return;
+    const confirmed = await confirm({
+      title: "Delete this test?",
+      message: "All linked questions may become inaccessible after deletion.",
+      confirmText: "Delete",
+      type: "error",
+    });
+    if (!confirmed) return;
     try {
       await axios.delete(`${baseUrl}/delete/${id}`);
       fetchTests();
     } catch (err) {
       console.error("Error deleting test:", err);
+      showPopup({ message: "Failed to delete test.", type: "error" });
     }
   };
 

@@ -21,32 +21,38 @@ import Question from "./pages/Questions";
 import TestForStudent from "./pages/TestForStudent";
 import AttemptTest from "./pages/AttemptTest";
 import ShowContent from "./pages/ShowContent";
+import ShowCourseInDetail from "./pages/ShowCourseInDetail";
+import DeleteCategorie from "./pages/DeleteCatagorie";
+import { PopupProvider } from "./components/PopupProvider";
 
 function App() {
 return(
- <Routes>
-  <Route path="/" element={<HomePage/>}/>
-  <Route path="/login" element={<LoginPage/>}/>
-  <Route path="/register" element={<RegisterPage/>}/>
-  <Route path="/addCourse" element={<AddCourse/>}/>
-  <Route path="/profile" element={<Profile/>}></Route>
-  <Route path="/updateCourse/:courseId" element={<UpdateCourse/>}></Route>
-  <Route path="/registeredCourse" element={<RegisteredCourses/>}></Route>
-   <Route path="/addContent" element={<AddContent/>}/>
-   <Route path="/message/:studentId" element={<Chat/>}></Route>
-   <Route path="/registeredStudent" element={<RegisteredStudents/>}></Route>
-   <Route path="/messageList" element={<MessageLists/>}></Route>
-   <Route path="/contact" element={<Contact/>}></Route>
-   <Route path="/addCategories" element={<AddCategories/>}></Route>
-   <Route path="/contentUpload/:courseId" element={<ContentUpload/>}></Route>
-   <Route path ="/payment" element={<PaymentSection/>}></Route>
-    <Route path ="/test" element={<Test/>}></Route>
-      <Route path ="/test-student" element={<TestForStudent/>}></Route>
-    <Route path ="/add-questions/:testId" element = {<Question/>}/>
-    <Route path="attempt-test/:testId" element={<AttemptTest/>}></Route>
-    <Route path="show-content/:courseId" element={<ShowContent/>}></Route>
-
- </Routes>  
+ <PopupProvider>
+  <Routes>
+   <Route path="/" element={<HomePage/>}/>
+   <Route path="/login" element={<LoginPage/>}/>
+   <Route path="/register" element={<RegisterPage/>}/>
+   <Route path="/addCourse" element={<AddCourse/>}/>
+   <Route path="/profile" element={<Profile/>}></Route>
+   <Route path="/updateCourse/:courseId" element={<UpdateCourse/>}></Route>
+   <Route path="/registeredCourse" element={<RegisteredCourses/>}></Route>
+    <Route path="/addContent" element={<AddContent/>}/>
+    <Route path="/message/:studentId" element={<Chat/>}></Route>
+    <Route path="/registeredStudent" element={<RegisteredStudents/>}></Route>
+    <Route path="/messageList" element={<MessageLists/>}></Route>
+    <Route path="/contact" element={<Contact/>}></Route>
+    <Route path="/addCategories" element={<AddCategories/>}></Route>
+    <Route path="/contentUpload/:courseId" element={<ContentUpload/>}></Route>
+    <Route path ="/payment" element={<PaymentSection/>}></Route>
+     <Route path ="/test" element={<Test/>}></Route>
+       <Route path ="/test-student" element={<TestForStudent/>}></Route>
+     <Route path ="/add-questions/:testId" element = {<Question/>}/>
+     <Route path="attempt-test/:testId" element={<AttemptTest/>}></Route>
+     <Route path="show-content/:courseId" element={<ShowContent/>}></Route>
+     <Route path="course/:courseId" element={<ShowCourseInDetail/>}></Route>
+     <Route path="deleteCategorie" element={<DeleteCategorie/>}></Route>
+  </Routes>
+ </PopupProvider>  
 )
 }
 
