@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import SockJS from "sockjs-client";
@@ -9,28 +9,13 @@ import { Client } from "@stomp/stompjs";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [categories, setCategories] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [studentDropdownOpen, setStudentDropdownOpen] = useState(false);
   const [teacherDropdownOpen, setTeacherDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const stompClient = useRef(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
-
-  // Fetch categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axios.get("http://localhost:8080/api/categories/get");
-        setCategories(res.data);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   // Fetch initial unread message count
   useEffect(() => {
@@ -98,30 +83,6 @@ function Navbar() {
           {!user && (
             <>
               <Link to="/" className="hover:text-yellow-400 transition">Home</Link>
-              <div
-                className="relative"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-                <button className="flex items-center hover:text-yellow-400 transition">
-                  Categories <ChevronDown size={18} className="ml-1" />
-                </button>
-                <div
-                  className={`absolute top-8 left-0 bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${
-                    dropdownOpen ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
-                  }`}
-                >
-                  {categories.length > 0 ? categories.map((cat, index) => (
-                    <Link
-                      key={index}
-                      to={`/category/${cat.name}`}
-                      className="block px-5 py-2 text-white text-sm hover:bg-gray-700 hover:text-yellow-300 transition-all"
-                    >
-                      {cat.name}
-                    </Link>
-                  )) : <p className="px-5 py-2 text-gray-400 text-sm">Loading...</p>}
-                </div>
-              </div>
               <Link to="/contact" className="hover:text-yellow-400 transition">Contact</Link>
             </>
           )}
@@ -130,30 +91,6 @@ function Navbar() {
           {user?.role === "student" && (
             <>
               <Link to="/" className="hover:text-yellow-400 transition">Home</Link>
-              <div
-                className="relative"
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-                <button className="flex items-center hover:text-yellow-400 transition">
-                  Categories <ChevronDown size={18} className="ml-1" />
-                </button>
-                <div
-                  className={`absolute top-8 left-0 bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform ${
-                    dropdownOpen ? "opacity-100 scale-100 visible" : "opacity-0 scale-95 invisible"
-                  }`}
-                >
-                  {categories.length > 0 ? categories.map((cat, index) => (
-                    <Link
-                      key={index}
-                      to={`/category/${cat.name}`}
-                      className="block px-5 py-2 text-white text-sm hover:bg-gray-700 hover:text-yellow-300 transition-all"
-                    >
-                      {cat.name}
-                    </Link>
-                  )) : <p className="px-5 py-2 text-gray-400 text-sm">Loading...</p>}
-                </div>
-              </div>
               <Link to="/registeredCourse" className="hover:text-yellow-400 transition">Register Courses</Link>
               <Link to="/test-student" className="hover:text-yellow-400 transition font-semibold">Test</Link>
               <Link to="/contact" className="hover:text-yellow-400 transition">Contact</Link>
@@ -256,25 +193,6 @@ function Navbar() {
           {!user && (
             <>
               <Link to="/" className="block hover:text-yellow-400 transition">Home</Link>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center justify-between w-full hover:text-yellow-400 transition"
-              >
-                Categories <ChevronDown size={18} />
-              </button>
-              {dropdownOpen && (
-                <div className="mt-2 bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-                  {categories.length > 0 ? categories.map((cat, index) => (
-                    <Link
-                      key={index}
-                      to={`/category/${cat.name}`}
-                      className="block px-5 py-2 text-white text-sm hover:bg-gray-700 hover:text-yellow-300 transition-all"
-                    >
-                      {cat.name}
-                    </Link>
-                  )) : <p className="px-5 py-2 text-gray-400 text-sm">Loading...</p>}
-                </div>
-              )}
               <Link to="/contact" className="block hover:text-yellow-400 transition">Contact</Link>
             </>
           )}

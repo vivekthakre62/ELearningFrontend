@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Edit, Trash2, PlusCircle, ListPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../components/PopupProvider";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Test() {
   const { confirm, showPopup } = usePopup();
@@ -16,7 +18,6 @@ export default function Test() {
   const baseUrl = "http://localhost:8080/api/test";
   const navigate = useNavigate();
 
-  // ✅ Fetch all tests
   const fetchTests = async () => {
     try {
       setLoading(true);
@@ -33,7 +34,6 @@ export default function Test() {
     fetchTests();
   }, []);
 
-  // ✅ Add new test
   const handleAddTest = async (e) => {
     e.preventDefault();
     if (!newTest.title.trim()) return;
@@ -47,7 +47,6 @@ export default function Test() {
     }
   };
 
-  // ✅ Delete test
   const handleDeleteTest = async (id) => {
     const confirmed = await confirm({
       title: "Delete this test?",
@@ -65,16 +64,13 @@ export default function Test() {
     }
   };
 
-  // ✅ Update test
   const handleUpdateTest = async (e) => {
     e.preventDefault();
     try {
-      // Send only title & description to avoid circular references
       await axios.put(`${baseUrl}/update/${editingTest.id}`, {
         title: editingTest.title,
         description: editingTest.description,
       });
-      console.log("Updated test:", editingTest);
       setEditingTest(null);
       fetchTests();
     } catch (err) {
@@ -82,122 +78,163 @@ export default function Test() {
     }
   };
 
-  // ✅ Navigate to question creation
   const handleAddQuestions = (testId) => {
     navigate(`/add-questions/${testId}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col items-center py-10 px-6">
-      <motion.h1
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="text-4xl font-extrabold text-blue-800 mb-8 drop-shadow-lg"
-      >
-        📘 Test Management
-      </motion.h1>
+    <div className="min-h-screen bg-stone-100 text-stone-900">
+      <Navbar />
 
-      {/* ✅ Add or Edit Form */}
-      <motion.form
-        onSubmit={editingTest ? handleUpdateTest : handleAddTest}
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg mb-10"
-      >
-        <h2 className="text-xl font-semibold mb-4 text-gray-700 flex items-center gap-2">
-          <PlusCircle className="text-blue-500" />
-          {editingTest ? "Update Test" : "Add New Test"}
-        </h2>
-
-        <input
-          type="text"
-          placeholder="Test Title"
-          value={editingTest ? editingTest.title : newTest.title}
-          onChange={(e) =>
-            editingTest
-              ? setEditingTest({ ...editingTest, title: e.target.value })
-              : setNewTest({ ...newTest, title: e.target.value })
-          }
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-blue-400 outline-none"
-        />
-        <textarea
-          placeholder="Test Description"
-          value={editingTest ? editingTest.description : newTest.description}
-          onChange={(e) =>
-            editingTest
-              ? setEditingTest({ ...editingTest, description: e.target.value })
-              : setNewTest({ ...newTest, description: e.target.value })
-          }
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 h-24 resize-none focus:ring-2 focus:ring-blue-400 outline-none"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold shadow-md transition-all"
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-28 sm:px-6">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="overflow-hidden rounded-[2rem] border border-stone-300 bg-white shadow-[0_24px_60px_rgba(28,25,23,0.08)]"
         >
-          {editingTest ? "Update Test" : "Add Test"}
-        </button>
+          <div className="border-b border-stone-200 bg-stone-50 px-8 py-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
+              Teacher Dashboard
+            </p>
+            <h1 className="mt-3 text-4xl font-bold tracking-tight text-stone-800">
+              Test Management
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500">
+              Create tests, update details, and manage question sets from one
+              clear workspace.
+            </p>
+          </div>
 
-        {editingTest && (
-          <button
-            type="button"
-            onClick={() => setEditingTest(null)}
-            className="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 rounded-lg font-semibold transition-all"
-          >
-            Cancel Edit
-          </button>
-        )}
-      </motion.form>
+          <div className="grid gap-8 px-8 py-8 lg:grid-cols-[360px,1fr]">
+            <motion.form
+              onSubmit={editingTest ? handleUpdateTest : handleAddTest}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm"
+            >
+              <h2 className="mb-5 flex items-center gap-2 text-xl font-semibold text-stone-800">
+                <PlusCircle className="text-amber-700" size={20} />
+                {editingTest ? "Update Test" : "Add New Test"}
+              </h2>
 
-      {/* ✅ Test List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-        {loading ? (
-          <p className="text-center text-gray-500 w-full">Loading...</p>
-        ) : (
-          <AnimatePresence>
-            {tests.map((test) => (
-              <motion.div
-                key={test.id}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white shadow-lg rounded-2xl p-5 relative hover:shadow-2xl transition-all"
+              <input
+                type="text"
+                placeholder="Test Title"
+                value={editingTest ? editingTest.title : newTest.title}
+                onChange={(e) =>
+                  editingTest
+                    ? setEditingTest({ ...editingTest, title: e.target.value })
+                    : setNewTest({ ...newTest, title: e.target.value })
+                }
+                className="mb-3 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
+              />
+              <textarea
+                placeholder="Test Description"
+                value={editingTest ? editingTest.description : newTest.description}
+                onChange={(e) =>
+                  editingTest
+                    ? setEditingTest({
+                        ...editingTest,
+                        description: e.target.value,
+                      })
+                    : setNewTest({ ...newTest, description: e.target.value })
+                }
+                className="mb-4 h-28 w-full resize-none rounded-xl border border-stone-300 bg-white px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
+              />
+
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-stone-900 py-3 font-semibold text-white transition-colors hover:bg-amber-800"
               >
-                <h3 className="text-xl font-bold text-blue-700 mb-2">
-                  {test.title}
-                </h3>
-                <p className="text-gray-600 mb-4">{test.description}</p>
+                {editingTest ? "Update Test" : "Add Test"}
+              </button>
 
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={() => setEditingTest(test)} // ✅ FIXED HERE
-                    className="flex items-center gap-1 text-yellow-600 hover:text-yellow-700 transition"
-                  >
-                    <Edit size={18} /> Edit
-                  </button>
+              {editingTest && (
+                <button
+                  type="button"
+                  onClick={() => setEditingTest(null)}
+                  className="mt-3 w-full rounded-xl border border-stone-300 bg-white py-3 font-semibold text-stone-700 transition-colors hover:bg-stone-100"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </motion.form>
 
-                  <button
-                    onClick={() => handleAddQuestions(test.id)}
-                    className="flex items-center gap-1 text-green-600 hover:text-green-700 transition"
-                  >
-                    <ListPlus size={18} /> Add Questions
-                  </button>
+            <div>
+              <div className="mb-6 flex items-center justify-between border-b border-stone-200 pb-4">
+                <p className="text-sm text-stone-500">Available tests</p>
+                <p className="text-2xl font-semibold text-stone-800">
+                  {loading ? "-" : tests.length}
+                </p>
+              </div>
 
-                  <button
-                    onClick={() => handleDeleteTest(test.id)}
-                    className="flex items-center gap-1 text-red-600 hover:text-red-700 transition"
-                  >
-                    <Trash2 size={18} /> Delete
-                  </button>
+              {loading ? (
+                <div className="rounded-3xl border border-dashed border-stone-300 bg-stone-50 px-6 py-14 text-center text-stone-500">
+                  Loading tests...
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        )}
+              ) : tests.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-stone-300 bg-stone-50 px-6 py-14 text-center">
+                  <p className="text-lg font-semibold text-stone-700">
+                    No tests created yet.
+                  </p>
+                  <p className="mt-2 text-sm text-stone-500">
+                    Add your first test using the form on the left.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2">
+                  <AnimatePresence>
+                    {tests.map((test) => (
+                      <motion.article
+                        key={test.id}
+                        layout
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.3 }}
+                        className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm transition-shadow hover:shadow-lg"
+                      >
+                        <h3 className="text-2xl font-semibold text-stone-800">
+                          {test.title}
+                        </h3>
+                        <p className="mt-3 min-h-[72px] text-sm leading-6 text-stone-600">
+                          {test.description || "No description provided."}
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap gap-3">
+                          <button
+                            onClick={() => setEditingTest(test)}
+                            className="inline-flex items-center gap-2 rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-100"
+                          >
+                            <Edit size={16} /> Edit
+                          </button>
+
+                          <button
+                            onClick={() => handleAddQuestions(test.id)}
+                            className="inline-flex items-center gap-2 rounded-xl bg-amber-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-800"
+                          >
+                            <ListPlus size={16} /> Add Questions
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteTest(test.id)}
+                            className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
+                          >
+                            <Trash2 size={16} /> Delete
+                          </button>
+                        </div>
+                      </motion.article>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.section>
       </div>
+
+      <Footer />
     </div>
   );
 }

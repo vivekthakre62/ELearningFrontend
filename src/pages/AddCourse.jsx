@@ -23,7 +23,6 @@ export default function AddCourse() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (!token || user?.role !== "teacher") navigate("/login");
@@ -106,35 +105,38 @@ export default function AddCourse() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-800 via-blue-500 to-gray-900 text-white overflow-hidden">
+    <div className="min-h-screen bg-stone-100 text-stone-900">
       <Navbar />
 
-      <motion.div className="absolute w-96 h-96 bg-yellow-500 rounded-full blur-3xl opacity-20 top-10 left-10 animate-pulse" />
-      <motion.div className="absolute w-96 h-96 bg-orange-500 rounded-full blur-3xl opacity-20 bottom-10 right-10 animate-pulse" />
-
       <motion.div
-        className="max-w-3xl mx-auto mt-32 p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20"
+        className="max-w-3xl mx-auto px-6 pt-32 pb-16"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.5 }}
       >
-        <motion.h2
-          className="text-3xl font-extrabold mb-6 text-center bg-gradient-to-r from-yellow-400 to-orange-400 text-transparent bg-clip-text"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          Add New Course
-        </motion.h2>
+        <div className="rounded-3xl border border-stone-300 bg-white shadow-[0_20px_60px_rgba(28,25,23,0.08)]">
+          <div className="border-b border-stone-200 px-8 py-6">
+            <motion.h2
+              className="text-3xl font-bold tracking-tight text-stone-800"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Add New Course
+            </motion.h2>
+            <p className="mt-2 text-sm text-stone-500">
+              Fill in the course details below and use a direct category name.
+            </p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5 px-8 py-8">
           <motion.input
             type="text"
             name="title"
             placeholder="Course Title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner"
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -146,7 +148,7 @@ export default function AddCourse() {
             placeholder="Course Description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner"
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
             rows={4}
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -155,44 +157,26 @@ export default function AddCourse() {
           />
 
           <motion.div
-            className="relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <label className="block mb-2 font-semibold text-yellow-300">
+            <label className="mb-2 block font-semibold text-stone-700">
               Category
             </label>
-            <div
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-full bg-gray-700 rounded-xl px-4 py-3 cursor-pointer flex justify-between items-center shadow-inner"
-            >
-              {formData.category || "Select Category"}
-              <span className="ml-2">&#9662;</span>
-            </div>
-            {dropdownOpen && (
-              <motion.div
-                className="absolute mt-1 w-full bg-gray-800 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-              >
-                {categories.length > 0 ? (
-                  categories.map((cat) => (
-                    <div
-                      key={cat.id}
-                      onClick={() => {
-                        setFormData({ ...formData, category: cat.name });
-                        setDropdownOpen(false);
-                      }}
-                      className="px-4 py-2 hover:bg-yellow-400 hover:text-black cursor-pointer transition"
-                    >
-                      {cat.name}
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-4 py-2 text-gray-400">Loading...</div>
-                )}
-              </motion.div>
+            <input
+              type="text"
+              name="category"
+              placeholder="Enter category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
+              required
+            />
+            {categories.length > 0 && (
+              <p className="mt-2 text-sm text-stone-500">
+                Existing categories: {categories.map((cat) => cat.name).join(", ")}
+              </p>
             )}
           </motion.div>
 
@@ -202,7 +186,7 @@ export default function AddCourse() {
             placeholder="Instructor Name"
             value={formData.instructor}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner"
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -215,7 +199,7 @@ export default function AddCourse() {
             placeholder="Duration (hours)"
             value={formData.duration}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner"
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -228,7 +212,7 @@ export default function AddCourse() {
             placeholder="Price"
             value={formData.price}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-xl bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-inner"
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
@@ -240,20 +224,20 @@ export default function AddCourse() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <label className="block mb-2 font-semibold text-yellow-300">
+            <label className="block mb-2 font-semibold text-stone-700">
               Upload Course Image
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="text-gray-700"
+              className="block w-full rounded-xl border border-dashed border-stone-300 bg-stone-50 px-4 py-3 text-sm text-stone-600 file:mr-4 file:rounded-lg file:border-0 file:bg-amber-700 file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-amber-800"
             />
             {preview && (
               <img
                 src={preview}
                 alt="Preview"
-                className="mt-2 w-40 h-40 object-cover rounded-xl"
+                className="mt-4 h-40 w-40 rounded-2xl border border-stone-200 object-cover shadow-sm"
               />
             )}
           </motion.div>
@@ -261,13 +245,14 @@ export default function AddCourse() {
           <motion.button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold py-3 rounded-xl shadow-lg hover:shadow-yellow-500/40 transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
+            className="w-full rounded-xl bg-stone-900 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:bg-amber-800"
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
           >
             {loading ? "Adding..." : "Add Course"}
           </motion.button>
-        </form>
+          </form>
+        </div>
       </motion.div>
 
       <Footer />

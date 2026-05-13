@@ -3,21 +3,20 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function TestForStudent() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user"));
   const baseUrl = "http://localhost:8080/api/test";
   const navigate = useNavigate();
 
-  // ✅ Fetch all available tests for students
   const fetchTests = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${baseUrl}/showAll`); 
-      // 👉 Endpoint should return all tests created by teachers
+      const res = await axios.get(`${baseUrl}/showAll`);
       setTests(res.data);
     } catch (err) {
       console.error("Error fetching tests:", err);
@@ -30,60 +29,92 @@ export default function TestForStudent() {
     fetchTests();
   }, []);
 
-  // ✅ Navigate to test attempt page
   const handleAttemptTest = (testId) => {
     navigate(`/attempt-test/${testId}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 to-emerald-200 flex flex-col items-center py-10 px-6">
-      <motion.h1
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        className="text-4xl font-extrabold text-green-800 mb-8 drop-shadow-lg"
-      >
-        🧾 Available Tests
-      </motion.h1>
+    <div className="min-h-screen bg-stone-100 text-stone-900">
+      <Navbar />
 
-      {/* ✅ Test List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-        {loading ? (
-          <p className="text-center text-gray-500 w-full">Loading...</p>
-        ) : tests.length === 0 ? (
-          <p className="text-gray-600 text-center w-full">
-            No tests available right now.
-          </p>
-        ) : (
-          <AnimatePresence>
-            {tests.map((test) => (
-              <motion.div
-                key={test.id}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white shadow-lg rounded-2xl p-5 hover:shadow-2xl transition-all"
-              >
-                <h3 className="text-xl font-bold text-green-700 mb-2">
-                  {test.title}
-                </h3>
-                <p className="text-gray-600 mb-4">{test.description}</p>
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-28 sm:px-6">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="overflow-hidden rounded-[2rem] border border-stone-300 bg-white shadow-[0_24px_60px_rgba(28,25,23,0.08)]"
+        >
+          <div className="border-b border-stone-200 bg-stone-50 px-8 py-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">
+              Student Dashboard
+            </p>
+            <h1 className="mt-3 text-4xl font-bold tracking-tight text-stone-800">
+              Available Tests
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500">
+              Choose a test from the list below and begin when you are ready.
+            </p>
+          </div>
 
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => handleAttemptTest(test.id)}
-                    className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg font-medium shadow-md transition-all"
-                  >
-                    <Eye size={18} /> Start Test
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        )}
+          <div className="px-8 py-8">
+            <div className="mb-6 flex items-center justify-between border-b border-stone-200 pb-4">
+              <p className="text-sm text-stone-500">Published tests</p>
+              <p className="text-2xl font-semibold text-stone-800">
+                {loading ? "-" : tests.length}
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="rounded-3xl border border-dashed border-stone-300 bg-stone-50 px-6 py-14 text-center text-stone-500">
+                Loading tests...
+              </div>
+            ) : tests.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-stone-300 bg-stone-50 px-6 py-14 text-center">
+                <p className="text-lg font-semibold text-stone-700">
+                  No tests available right now.
+                </p>
+                <p className="mt-2 text-sm text-stone-500">
+                  New tests will appear here once teachers publish them.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <AnimatePresence>
+                  {tests.map((test) => (
+                    <motion.article
+                      key={test.id}
+                      layout
+                      initial={{ opacity: 0, y: 24 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ duration: 0.3 }}
+                      className="rounded-3xl border border-stone-200 bg-stone-50 p-6 shadow-sm transition-shadow hover:shadow-lg"
+                    >
+                      <h3 className="text-2xl font-semibold text-stone-800">
+                        {test.title}
+                      </h3>
+                      <p className="mt-3 min-h-[72px] text-sm leading-6 text-stone-600">
+                        {test.description || "No description provided."}
+                      </p>
+
+                      <div className="mt-6 flex justify-end">
+                        <button
+                          onClick={() => handleAttemptTest(test.id)}
+                          className="inline-flex items-center gap-2 rounded-xl bg-stone-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-800"
+                        >
+                          <Eye size={16} /> Start Test
+                        </button>
+                      </div>
+                    </motion.article>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )}
+          </div>
+        </motion.section>
       </div>
+
+      <Footer />
     </div>
   );
 }
