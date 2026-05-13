@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "./PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function Courses({ searchQuery = "" }) {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function Courses({ searchQuery = "" }) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/course/show")
+      .get(apiUrl("/api/course/show"))
       .then((res) => {
         const coursesWithImages = res.data.map((course) => {
           if (course.data) {
@@ -45,7 +46,7 @@ export default function Courses({ searchQuery = "" }) {
       if (!confirmed) return;
 
       await axios.post(
-        `http://localhost:8080/api/register/registerCourse/${courseId}`,
+        apiUrl(`/api/register/registerCourse/${courseId}`),
         user,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -66,7 +67,7 @@ export default function Courses({ searchQuery = "" }) {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/course/delete/${courseId}`, {
+      await axios.delete(apiUrl(`/api/course/delete/${courseId}`), {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCourses(courses.filter((c) => c.id !== courseId));

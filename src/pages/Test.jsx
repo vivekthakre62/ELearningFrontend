@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { usePopup } from "../components/PopupProvider";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiUrl } from "../config/api";
 
 export default function Test() {
   const { confirm, showPopup } = usePopup();
@@ -15,7 +16,7 @@ export default function Test() {
   const [loading, setLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
-  const baseUrl = "http://localhost:8080/api/test";
+  const baseUrl = apiUrl("/api/test");
   const navigate = useNavigate();
 
   const fetchTests = async () => {

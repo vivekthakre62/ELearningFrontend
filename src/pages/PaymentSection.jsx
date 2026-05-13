@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { apiUrl } from "../config/api";
 
 export default function PaymentSection() {
   const location = useLocation();
@@ -30,7 +31,7 @@ export default function PaymentSection() {
     try {
       // 🌐 Backend API call
       const res = await axios.post(
-        `http://localhost:8080/api/payment/add/${user.id}/${courseId}`,
+        apiUrl(`/api/payment/add/${user.id}/${courseId}`),
         {
           method: selectedMethod,
           details: paymentDetails,

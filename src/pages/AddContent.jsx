@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiUrl } from "../config/api";
 
 export default function AddContent() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function AddContent() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/course/show")
+      .get(apiUrl("/api/course/show"))
       .then((res) => setCourses(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));

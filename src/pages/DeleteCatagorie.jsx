@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 function DeleteCategorie() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ function DeleteCategorie() {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/categories/get");
+      const res = await axios.get(apiUrl("/api/categories/get"));
       const categoryList = Array.isArray(res.data)
         ? res.data
         : Array.isArray(res.data?.data)
@@ -62,7 +63,7 @@ function DeleteCategorie() {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/categories/delete/${id}`, {
+      await axios.delete(apiUrl(`/api/categories/delete/${id}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

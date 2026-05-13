@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function RegistrationPage() {
   const { showPopup } = usePopup();
@@ -34,7 +35,7 @@ export default function RegistrationPage() {
     }
 
     try {
-      await axios.post("http://localhost:8080/api/user/register", formData);
+      await axios.post(apiUrl("/api/user/register"), formData);
       showPopup({ message: "Registration successful!", type: "success" });
 
       setFormData({

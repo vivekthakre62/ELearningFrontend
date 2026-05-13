@@ -4,8 +4,9 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import { ArrowLeft, Send, UserCircle2 } from "lucide-react";
+import { API_BASE_URL, WS_BASE_URL } from "../config/api";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = API_BASE_URL;
 
 function Chat() {
   const { studentId } = useParams();
@@ -77,7 +78,7 @@ function Chat() {
   useEffect(() => {
     if (!roomId) return undefined;
 
-    const socket = new SockJS(`${BASE_URL}/ws`);
+    const socket = new SockJS(`${WS_BASE_URL}/ws`);
     stompClient.current = new Client({
       webSocketFactory: () => socket,
       debug: () => {},

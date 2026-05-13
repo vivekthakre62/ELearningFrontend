@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 function UpdateCourse() {
   const { courseId } = useParams();
@@ -20,7 +21,7 @@ function UpdateCourse() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/course/get/${courseId}`, {
+      .get(apiUrl(`/api/course/get/${courseId}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,7 +42,7 @@ function UpdateCourse() {
     e.preventDefault();
 
     axios
-      .put(`http://localhost:8080/api/course/update/${courseId}`, course, {
+      .put(apiUrl(`/api/course/update/${courseId}`), course, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

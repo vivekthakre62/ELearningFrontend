@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/user/login",
+        apiUrl("/api/user/login"),
         formData,
         { headers: { "Content-Type": "application/json" } }
       );

@@ -1,3 +1,4 @@
+import { apiUrl } from "../config/api";
 // src/pages/Contact.jsx
 import React, { useState } from "react";
 import { motion } from "framer-motion";
@@ -22,7 +23,7 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/contact", formData);
+      await axios.post(apiUrl("/api/contact"), formData);
       setSubmitted(true);
       setFormData({ name: "", email: "", message: "" });
     } catch (err) {

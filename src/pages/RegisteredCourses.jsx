@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
+import { apiUrl } from "../config/api";
 
 function RegisteredCourses() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function RegisteredCourses() {
     }
 
     axios
-      .get(`http://localhost:8080/api/register/show/${user.id}`, {
+      .get(apiUrl(`/api/register/show/${user.id}`), {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

@@ -4,6 +4,7 @@ import { PlusCircle, Trash2, Edit3, Save, X } from "lucide-react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function Question() {
   const { testId } = useParams();
@@ -30,7 +31,7 @@ export default function Question() {
       setLoading(true);
 
       const res = await axios.get(
-        `http://localhost:8080/api/question/show/${testId}`,
+        apiUrl(`/api/question/show/${testId}`),
         { headers }
       );
 
@@ -62,7 +63,7 @@ export default function Question() {
     try {
       setLoading(true);
       await axios.post(
-        `http://localhost:8080/api/question/add/${testId}`,
+        apiUrl(`/api/question/add/${testId}`),
         newQuestion,
         { headers }
       );
@@ -97,7 +98,7 @@ export default function Question() {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/question/delete/${id}`, {
+      await axios.delete(apiUrl(`/api/question/delete/${id}`), {
         headers,
       });
       setQuestions((prev) => prev.filter((q) => q.id !== id));
@@ -122,7 +123,7 @@ export default function Question() {
     try {
       setLoading(true);
       await axios.put(
-        `http://localhost:8080/api/question/update/${q.id}`,
+        apiUrl(`/api/question/update/${q.id}`),
         updatedQuestion,
         { headers }
       );

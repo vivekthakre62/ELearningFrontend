@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { apiUrl } from "../config/api";
 
 export default function ContentUpload() {
   const { courseId } = useParams();
@@ -31,7 +32,7 @@ export default function ContentUpload() {
       formData.append("file", file);
 
       const res = await axios.post(
-        `http://localhost:8080/api/contents/upload/${courseId}`,
+        apiUrl(`/api/contents/upload/${courseId}`),
         formData,
         {
           headers: { Authorization: `Bearer ${token}` }

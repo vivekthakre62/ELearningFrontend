@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FileText, Image as ImageIcon, Video, Loader2 } from "lucide-react";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function ShowContent() {
   const { courseId } = useParams();
@@ -17,7 +18,7 @@ export default function ShowContent() {
     const fetchContents = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/contents/get/${courseId}`,
+          apiUrl(`/api/contents/get/${courseId}`),
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setContents(res.data);
@@ -34,7 +35,7 @@ export default function ShowContent() {
   const openFile = async (fileName, fileType) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/contents/download/${fileName}`,
+        apiUrl(`/api/contents/download/${fileName}`),
         { headers: { Authorization: `Bearer ${token}` }, responseType: "blob" }
       );
 

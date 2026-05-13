@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
+import { apiUrl, WS_BASE_URL } from "../config/api";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function Navbar() {
   useEffect(() => {
     if (!user) return;
     axios
-      .get(`http://localhost:8080/api/messages/unread/${user.id}`)
+      .get(apiUrl(`/api/messages/unread/${user.id}`))
       .then((res) => setUnreadCount(res.data.count))
       .catch((err) => console.error("Error fetching unread messages:", err));
   }, [user]);
@@ -29,7 +30,7 @@ function Navbar() {
   // Setup WebSocket for real-time messages
   useEffect(() => {
     if (!user) return;
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS(`${WS_BASE_URL}/ws`);
     stompClient.current = new Client({
       webSocketFactory: () => socket,
       debug: (str) => console.log(str),

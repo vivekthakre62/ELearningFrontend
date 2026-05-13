@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { usePopup } from "../components/PopupProvider";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiUrl } from "../config/api";
 
 export default function AttemptTest() {
   const { testId } = useParams();
@@ -17,7 +18,7 @@ export default function AttemptTest() {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
 
-  const baseUrl = "http://localhost:8080/api/question";
+  const baseUrl = apiUrl("/api/question");
 
   const fetchQuestions = async () => {
     try {

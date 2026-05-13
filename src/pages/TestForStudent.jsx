@@ -5,12 +5,13 @@ import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiUrl } from "../config/api";
 
 export default function TestForStudent() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const baseUrl = "http://localhost:8080/api/test";
+  const baseUrl = apiUrl("/api/test");
   const navigate = useNavigate();
 
   const fetchTests = async () => {

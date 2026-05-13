@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function ShowCourseInDetail() {
   const { courseId } = useParams();
@@ -20,7 +21,7 @@ export default function ShowCourseInDetail() {
     }
 
     axios
-      .get(`http://localhost:8080/api/course/get1/${courseId}`, {
+      .get(apiUrl(`/api/course/get1/${courseId}`), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { usePopup } from "../components/PopupProvider";
+import { apiUrl } from "../config/api";
 
 export default function AddCourse() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function AddCourse() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/categories/get")
+      .get(apiUrl("/api/categories/get"))
       .then((res) => setCategories(res.data))
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
@@ -76,7 +77,7 @@ export default function AddCourse() {
         new Blob([JSON.stringify(courseJson)], { type: "application/json" })
       );
 
-      await axios.post(`http://localhost:8080/api/course/add/${user.id}`, data, {
+      await axios.post(apiUrl(`/api/course/add/${user.id}`), data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

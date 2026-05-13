@@ -4,8 +4,9 @@ import axios from "axios";
 import { Camera, Mail, Phone, Save, User } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { API_BASE_URL } from "../config/api";
 
-const API_BASE = "http://localhost:8080/api/user";
+const API_BASE = `${API_BASE_URL}/api/user`;
 
 export default function Profile() {
   const token = localStorage.getItem("token");

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { apiUrl } from "../config/api";
 
 export default function AddCategories() {
   const [categories, setCategories] = useState("");
@@ -22,7 +23,7 @@ export default function AddCategories() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/categories/add",
+        apiUrl("/api/categories/add"),
         { name: categories},
         {
           headers: {
